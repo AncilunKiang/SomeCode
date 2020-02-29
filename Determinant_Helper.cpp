@@ -7,6 +7,8 @@ struct Determinant
 {//行列式
     int n;
     int d[9][9];
+    int c=1;
+    string name="D0";
 };
 
 map<string,int> m;
@@ -67,7 +69,7 @@ void Add(Determinant &D,int i,int j,bool l,int k)
         for(int a=0;a<D.n;a++)
             D.d[a][i]+=k*D.d[a][j];
     }
-    
+    D.c=0-D.c;
 }
 void Cofactor(Determinant D,int i,int j,Determinant &A)
 {//求aij的余子式
@@ -118,19 +120,46 @@ int Evaluation(Determinant D)
         return e;
     }
 }
+void Split(Determinant D,int i,int j,int a,int b,Determinant &A,Determinant &B)
+{//aij分裂成a+b，分别放在A、B里
+    A.n=B.n=D.n;
+    for(int x=0;x<D.n;x++)
+    for(int y=0;y<D.n;y++)
+        A.d[x][y]=B.d[x][y]=D.d[x][y];
+    A.d[i][j]=a;
+    B.d[i][j]=b;
+}
+void FactorOutCoefficients(Determinant &D,int i,int k,bool l)
+{//提出系数k
+    if(l)
+    {
+        for(int a=0;a<D.n;a++)
+            D.d[i][a]/=k;
+    }
+    else
+    {
+        for(int a=0;a<D.n;a++)
+            D.d[a][i]/=k;
+    }
+    D.c*=k;
+}
 void GetHelp()
 {//获取操作帮助
-    cout<<"q/Q       :退出"<<endl;
-    cout<<"H/h    :查看操作帮助"<<endl;
-    cout<<"=       :求行列式的值"<<endl;
-    cout<<"Mij     :第aij的余子式"<<endl;
-    cout<<"T       :求的转置行列式"<<endl;
-    cout<<"li<->lj :第i行和第j行互换"<<endl;
-    cout<<"ci<->cj :第i列和第j列互换"<<endl;
-    cout<<"li+klj  :第i行加上k倍的第j行"<<endl;
-    cout<<"ci+kcj  :第i列加上k倍的第j列"<<endl;
-    cout<<"li-klj  :第i行减去k倍的第j行"<<endl;
-    cout<<"ci-kcj  :第i列减去k倍的第j列"<<endl;
+    cout<<"q/Q      :退出"<<endl;
+    cout<<"H/h      :查看操作帮助"<<endl;
+    cout<<"=        :求行列式的值"<<endl;
+    cout<<"aij->x+y :aij分裂为x+y"<<endl;
+    cout<<"Mij      :第aij的余子式"<<endl;
+    cout<<"T        :求的转置行列式"<<endl;
+    cout<<"li<->lj  :第i行和第j行互换"<<endl;
+    cout<<"ci<->cj  :第i列和第j列互换"<<endl;
+    cout<<"kli      :提出第i行的系数k"<<endl;
+    cout<<"kci      :提出第i列的系数k"<<endl;
+    cout<<"li+klj   :第i行加上k倍的第j行"<<endl;
+    cout<<"ci+kcj   :第i列加上k倍的第j列"<<endl;
+    cout<<"li-klj   :第i行减去k倍的第j行"<<endl;
+    cout<<"ci-kcj   :第i列减去k倍的第j列"<<endl;
+
 }
 bool fun()
 {//操作函数
@@ -142,7 +171,7 @@ bool fun()
         cout<<"请输入操作对象：";
         cin>>ob;
         Transpose(D[m[ob]]);
-        cout<<ob<<"："<<endl;
+        cout<<ob<<"：  系数："<<D[m[ob]].c<<endl;
         OutputDeterminant(D[m[ob]]);
     }
     else if(O=="h"||O=="H") GetHelp();
@@ -157,14 +186,27 @@ bool fun()
         cin>>name;
         m[name]=num;
         Cofactor(D[m[ob]],O[1]-'0'-1,O[2]-'0'-1,D[m[name]]);
-        cout<<name<<"："<<endl;
+        D[m[name]].name=name;
+        cout<<name<<"：  系数："<<D[m[name]].c<<endl;
         OutputDeterminant(D[m[name]]);
     }
     else if(O[0]=='=')
     {//求值
         cout<<"请输入操作对象：";
         cin>>ob;
-        cout<<Evaluation(D[m[ob]])<<endl;
+        int e=Evaluation(D[m[ob]]);
+        cout<<D[m[ob]].name<<'='<<D[m[ob]].c<<'*'<<e<<'='<<e*D[m[ob]].c<<endl;
+    }
+    else if(O[1]=='l'||O[1]=='c')
+    {//提取系数
+        cout<<"请输入操作对象：";
+        cin>>ob;
+        if(O[1]=='l')
+        FactorOutCoefficients(D[m[ob]],O[2]-'0'-1,O[0]-'0',1);
+        else
+        FactorOutCoefficients(D[m[ob]],O[2]-'0'-1,O[0]-'0',0);
+        cout<<ob<<"：  系数："<<D[m[ob]].c<<endl;
+        OutputDeterminant(D[m[ob]]);
     }
     else if(O[2]=='+')
     {//加
@@ -172,7 +214,7 @@ bool fun()
         cin>>ob;
         if(O[0]=='l') Add(D[m[ob]],O[1]-'0'-1,O[5]-'0'-1,1,O[3]-'0');
         else Add(D[m[ob]],O[1]-'0'-1,O[5]-'0'-1,0,O[3]-'0');
-        cout<<ob<<"："<<endl;
+        cout<<ob<<"：  系数："<<D[m[ob]].c<<endl;
         OutputDeterminant(D[m[ob]]);
     }
     else if(O[2]=='-')
@@ -181,17 +223,36 @@ bool fun()
         cin>>ob;
         if(O[0]=='l') Add(D[m[ob]],O[1]-'0'-1,O[5]-'0'-1,1,0-(O[3]-'0'));
         else Add(D[m[ob]],O[1]-'0'-1,O[5]-'0'-1,0,0-(O[3]-'0'));
-        cout<<ob<<"："<<endl;
+        cout<<ob<<"：  系数："<<D[m[ob]].c<<endl;
         OutputDeterminant(D[m[ob]]);
     }
-    else if(O[3]=='-')
+    else if(O[2]=='<')
     {//换行/列
         cout<<"请输入操作对象：";
         cin>>ob;
         if(O[0]=='l') Swap(D[m[ob]],O[1]-'0'-1,O[6]-'0'-1,1);
         else Swap(D[m[ob]],O[1]-'0'-1,O[6]-'0'-1,0);
-        cout<<ob<<"："<<endl;
+        cout<<ob<<"：  系数："<<D[m[ob]].c<<endl;
         OutputDeterminant(D[m[ob]]);
+    }
+    else if(O[3]=='-')
+    {//分裂
+        string na,nb;
+        cout<<"请输入操作对象：";
+        cin>>ob;
+        num++;
+        cout<<"请输入第一个子行列式的名字：";
+        cin>>na;
+        m[na]=num;
+        num++;
+        cout<<"请输入第二个子行列式的名字：";
+        cin>>nb;
+        m[nb]=num;
+        Split(D[m[ob]],O[1]-'0'-1,O[2]-'0'-1,O[5]-'0',O[7]-'0',D[m[na]],D[m[nb]]);
+        cout<<na<<"：  系数："<<D[m[na]].c<<endl;
+        OutputDeterminant(D[m[na]]);
+        cout<<nb<<"：  系数："<<D[m[nb]].c<<endl;
+        OutputDeterminant(D[m[nb]]);
     }
     return 1;
 }
@@ -209,7 +270,7 @@ int main()
         cin>>D[0].d[i][j];
     }
     cout<<"行列式录入完成"<<endl;
-    cout<<"D0:"<<endl;
+    cout<<"D0:  系数：1"<<endl;
     OutputDeterminant(D[0]);
     while(fun());
     return 0;
