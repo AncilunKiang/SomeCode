@@ -15,3 +15,9 @@
 产生式系统搞得动物识别<br>
 ## PortScanner
 计算机网络程设计，简单端口扫描器<br>
+## MissionariesAndCannibalsDFS
+这也是人工智能导论的一个实验<br>
+DFS解决n传教士与野人问题<br>
+## EightDigital
+这还是人工智能导论的一个实验<br>
+A* 解决八数码问题<br>
