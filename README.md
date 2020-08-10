@@ -21,3 +21,7 @@ DFS解决n传教士与野人问题<br>
 ## EightDigital
 这还是人工智能导论的一个实验<br>
 A* 解决八数码问题<br>
+## Greedy_snake
+这个是闲的没事写的<br>
+丐版贪吃蛇<br>
+
