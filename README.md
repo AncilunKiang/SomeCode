@@ -29,3 +29,7 @@ A* 解决八数码问题<br>
 ## AutoPunchTheClock
 这个是python写的自动健康打卡<br>
 直接用的Selenium模拟操作，验证码识别用的百度API<br>
+## library
+这个是python写的图书馆抢座<br>
+也是直接用的Selenium模拟操作，验证码识别用的百度API<br>
+set_library是对应的配置文件<br>
