@@ -33,7 +33,7 @@ A* 解决八数码问题<br>
 这个是python写的图书馆抢座<br>
 也是直接用的Selenium模拟操作，验证码识别用的百度API<br>
 set_library是对应的配置文件<br>
-##人脸研制评估
+## 人脸研制评估
 Facial_Beauty_Prediction_10.ipynb文件是10轮模型训练文件<br>
 Facial_Beauty_Prediction_30.ipynb文件是30轮模型训练文件<br>
 FBP_test.ipynb文件是利用模型实现的颜值打分器程序<br>
